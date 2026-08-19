@@ -1,0 +1,173 @@
+# ==========================================
+# 2. CODE CELL (Runnable Code & Line-by-Line Comments)
+# ==========================================
+
+from pathlib import Path # Brings in the 'Path' tool to handle file locations like a GPS
+import os # Brings in the 'os' module to interact with the computer's operating system
+
+def readfielandfolder(): # Defines a new reusable block of code (function) to list files
+    path = Path('') # Creates a Path object pointing to the current working folder (empty string)
+    items = list(path.rglob('*')) # Searches recursively for everything ('*') and converts the result into a list
+    for i, items in enumerate(items): # Loops through the items, using 'enumerate' to get an automatic counter 'i'
+        print(f"{i+1}  : {items} ") # Prints the counter (adding 1 so it starts at 1, not 0) and the file name
+
+
+def createfile(): # Defines a function to create a brand new file
+    try: # Starts a block to test for errors during execution
+        readfielandfolder() # Calls our previously defined function to show the user existing files
+        name = input("please tell your file name :- ") # Asks the user for a name and stores it in the variable 'name'
+        p = Path(name) # Converts the string name into a proper Path object
+        
+        if not p.exists(): # Checks the condition: if this file DOES NOT already exist on the computer
+            with open(p, "w") as fs: # Opens the file safely in 'w' (write) mode, assigning it to variable 'fs'
+                data = input("what you want to write in this file :- ") # Prompts user for text and stores it in 'data'
+                fs.write(data) # Writes the stored text data directly into the open file
+            
+            print(f"FILE CREATED SUCCESSFULLY") # Prints a success message to the screen
+        else: # If the 'if' condition is false (meaning the file DOES exist), run this block instead
+            print("this file already exist") # Warns the user they can't create it again
+        
+    except Exception as err: # Catches any unexpected errors that happened in the 'try' block
+        print(f"An error occured as {err}") # Prints the specific error message
+
+
+def readfile(): # Defines a function to open and read a file's contents
+    try: # Starts the error-monitoring block
+        readfielandfolder() # Shows the user what files are available
+        name = input("which file you want to read ") # Gets the target file name from the user
+        p = Path(name) # Converts the input string into a Path object
+        
+        if p.exists() and p.is_file(): # Checks TWO conditions: does it exist? AND is it actually a file (not a folder)?
+            with open(p, 'r') as fs: # Opens the file safely in 'r' (read) mode
+                data = fs.read() # Reads the entire contents of the file and stores it in 'data'
+                print(data) # Prints the contents to the screen
+            
+            print("Readed successfully ") # Prints a confirmation message
+        else: # Executes if the file doesn't exist or is a folder
+            print("the file doesnot exist") # Warns the user
+            
+    except Exception as err: # Catches any crashes (like permission issues)
+        print(f"An error occured as {err}") # Displays the error
+
+
+def updatefile(): # Defines a function to modify an existing file
+    try: # Starts the error-monitoring block
+        readfielandfolder() # Shows available files
+        name = input("tell which file you want to update :- ") # Asks the user which file to target
+        p = Path(name) # Creates a Path object for the target file
+        
+        if p.exists() and p.is_file(): # Checks if the file is valid and exists
+            print("press 1 for changing the name of your file :- ") # Prints a menu option
+            print("press 2 for overwriting the data of your file ") # Prints a menu option
+            print("press 3 for appending some content in your file ") # Prints a menu option
+
+            res = int(input("tell your response :- ")) # Gets user input and converts it from text to a whole number (integer)
+
+            if res == 1: # Checks if the user chose option 1
+                name2 = input("tell  your new file name :- ") # Asks for the new file name
+                p2 = Path(name2) # Creates a Path object for the NEW name
+                p.rename(p2) # Uses the pathlib tool to easily rename the file from 'p' to 'p2'
+            
+            if res == 2: # Checks if the user chose option 2
+                with open(p, 'w') as fs: # Opens the file in 'w' (write/overwrite) mode
+                    data = input("tell what you want to write this is overwrite the data :- ") # Gets new text
+                    fs.write(data) # Writes the text, completely erasing the old contents
+        
+            if res == 3: # Checks if the user chose option 3
+                with open(p, 'a') as fs: # Opens the file in 'a' (append) mode
+                    data = input("tell what you want to append :- ") # Gets the text to add
+                    fs.write(" " + data) # Adds a space and the new text to the very end of the file
+
+    except Exception as err: # Catches any errors
+        print(f"an error occured as {err}") # Prints the error message
+
+
+def deletefile(): # Defines a function to delete a file
+    try: # Starts error-monitoring block
+        readfielandfolder() # Lists current files
+        name = input("whuich file you want to delete :- ") # Asks user which file to destroy
+        p = Path(name) # Converts input to Path object
+
+        if p.exists() and p.is_file(): # Checks if the file is real and is not a directory
+            os.remove(name) # Uses the 'os' module to permanently delete the file from the hard drive
+            print("file removes suiccessfully ") # Confirms deletion
+        else: # Executes if file isn't found
+            print("No such file exist") # Warns user
+    
+    except Exception as err: # Catches errors
+        print(f"An error occured as {err}") # Prints error
+
+
+# --- MAIN PROGRAM EXECUTION STARTS HERE ---
+
+print("press 1 for creating a file") # Displays main menu option 1
+print("press 2 for reading a file") # Displays main menu option 2
+print("press 3 for updating a file") # Displays main menu option 3
+print("press 4 for deletion a file") # Displays main menu option 4
+
+check = int(input("please tell your response :- ")) # Takes user input, converts to integer, stores in 'check'
+
+if check == 1: # Evaluates if user entered 1
+    createfile() # Calls the createfile function
+
+if check == 2: # Evaluates if user entered 2
+    readfile() # Calls the readfile function
+
+if check == 3: # Evaluates if user entered 3
+    updatefile() # Calls the updatefile function
+
+if check == 4: # Evaluates if user entered 4
+    deletefile() # Calls the deletefile function
+
+
+# ==========================================
+# 3. PROGRAM FLOW & DRY RUN (The Execution Trace)
+# ==========================================
+"""
+EXECUTION TRACE (Scenario: Updating a file by appending text):
+1. Python reads all 'def' blocks into memory without running them yet.
+2. Reaches the Main Menu `print` statements and displays them.
+3. Reaches `check = int(input(...))`. User types '3' and presses Enter.
+4. `check` becomes the integer 3.
+5. Python evaluates `if check == 1:` -> False.
+6. Python evaluates `if check == 2:` -> False.
+7. Python evaluates `if check == 3:` -> True! Execution jumps into `updatefile()`.
+8. Inside `updatefile()`:
+   a. Enters `try` block.
+   b. Calls `readfielandfolder()` to display directory contents.
+   c. Prompts for filename. User types "log.txt". `p = Path("log.txt")`.
+   d. `if p.exists() and p.is_file():` evaluates to True.
+   e. Displays the update sub-menu (1=rename, 2=overwrite, 3=append).
+   f. `res = int(input(...))` -> User types '3'.
+   g. `if res == 1:` -> False.
+   h. `if res == 2:` -> False.
+   i. `if res == 3:` -> True! 
+   j. Opens "log.txt" in 'a' (append) mode using `with open(...)`.
+   k. Prompts for append data. User types "System checked."
+   l. Executes `fs.write(" System checked.")`.
+   m. File closes automatically.
+9. Function finishes, program terminates.
+"""
+
+# ==========================================
+# 4. THE "PYTHONIC" PRO-TIP (Bonus)
+# ==========================================
+"""
+While it is great to understand what every statement does, writing a comment on 
+EVERY single line is considered a "code smell" in professional development because 
+it makes the code visually cluttered. 
+
+PYTHONIC WAY:
+Write code that explains itself using good variable names, and use "Docstrings" 
+to explain the PURPOSE of a function, rather than explaining the syntax line-by-line.
+
+def deletefile(file_name: str) -> None:
+    \"\"\"
+    Attempts to delete a specified file from the current directory.
+    Alerts the user if the file does not exist or cannot be accessed.
+    \"\"\"
+    target_path = Path(file_name)
+    if target_path.is_file():
+        target_path.unlink()  # pathlib's built-in delete method
+        print(f"{file_name} deleted.")
+"""
